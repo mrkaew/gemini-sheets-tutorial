@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Tutorial: Gemini in Google Sheets</title>
+    <!-- Chosen Palette: Calm Neutrals with a Touch of Green -->
+    <!-- Application Structure Plan: A single-page, vertical-scrolling application with a sticky navigation bar. The structure follows the linear flow of the original tutorial (Intro, 3 Scenarios, Conclusion). This was chosen to guide the user through the learning process sequentially. Each scenario is presented in an interactive module that simulates the Google Sheets UI, where users click through steps to see the effects of Gemini prompts on mock data. This active learning approach is more engaging and effective for beginners than a static text document. -->
+    <!-- Visualization & Content Choices: - Introduction/Conclusion: (Goal: Inform) Standard text blocks. - Scenario 1 (Cleaning): (Goal: Organize) An HTML/CSS mock-up of a table is dynamically updated with JS to show data being cleaned. This simulates the action. - Scenario 2 (Formulas): (Goal: Inform) The mock table is updated with calculated results via JS, demonstrating the formula's output. - Scenario 3 (Charts): (Goal: Visualize) A Chart.js line chart is dynamically rendered within the mock UI to provide a compelling visual of the feature's capability. All interactions are designed to guide the user step-by-step. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .prompt-code {
+            background-color: #f1f5f9; /* slate-100 */
+            border-left: 4px solid #10b981; /* emerald-500 */
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            color: #334155; /* slate-700 */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-emerald-600">Gemini in Sheets</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#introduction" class="text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">Introduction</a>
+                        <a href="#scenario1" class="text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">1. Cleaning Data</a>
+                        <a href="#scenario2" class="text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">2. Formulas</a>
+                        <a href="#scenario3" class="text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">3. Charts</a>
+                        <a href="#conclusion" class="text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">Conclusion</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="introduction" class="text-center mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">Welcome to Gemini in Sheets!</h2>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600">
+                Today, we're going to explore a fantastic new way to work with our data in Google Sheets. We'll be using **Gemini**, our AI assistant, directly within our spreadsheets. The best part? You don't need to be a coding expert or a spreadsheet wizard. Gemini helps us perform complex tasks using simple, everyday language.
+            </p>
+        </section>
+
+        <div class="space-y-16 md:space-y-24">
+            
+            <section id="scenario1">
+                <div class="text-center mb-12">
+                    <span class="text-emerald-600 font-semibold">Scenario 1</span>
+                    <h3 class="text-2xl md:text-3xl font-bold mt-2">Data Cleaning & Organization</h3>
+                    <p class="max-w-2xl mx-auto mt-4 text-slate-600">You've just imported a list of contacts, and it's a bit messy. Names have inconsistent capitalization, and there might be some duplicate entries. Manually fixing this would take a lot of time.</p>
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <div class="flex items-center mb-3">
+                            <span class="w-3 h-3 bg-red-400 rounded-full mr-2"></span>
+                            <span class="w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
+                            <span class="w-3 h-3 bg-green-400 rounded-full"></span>
+                            <span class="ml-auto text-sm font-medium text-slate-500">Messy_Contacts.csv</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-200 text-slate-600">
+                                    <tr>
+                                        <th class="p-2 font-semibold">A: Name</th>
+                                        <th class="p-2 font-semibold">B: Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table1-body" class="bg-white">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="scenario1-steps">
+                        <h4 class="font-bold text-lg mb-4">Goal:</h4>
+                        <ul class="list-disc list-inside space-y-2 text-slate-600 mb-6">
+                            <li>Standardize capitalization of names (e.g., 'john doe' to 'John Doe').</li>
+                            <li>Remove any duplicate rows to ensure unique entries.</li>
+                        </ul>
+                        <button id="scenario1-start-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Start Tutorial</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="scenario2">
+                <div class="text-center mb-12">
+                    <span class="text-emerald-600 font-semibold">Scenario 2</span>
+                    <h3 class="text-2xl md:text-3xl font-bold mt-2">Generating Formulas & Calculations</h3>
+                    <p class="max-w-2xl mx-auto mt-4 text-slate-600">You have a sales report with individual product sales, and you need to quickly calculate the total revenue for each product category. Writing complex `SUMIF` formulas can be tricky.</p>
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                         <div class="flex items-center mb-3">
+                            <span class="w-3 h-3 bg-red-400 rounded-full mr-2"></span>
+                            <span class="w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
+                            <span class="w-3 h-3 bg-green-400 rounded-full"></span>
+                            <span class="ml-auto text-sm font-medium text-slate-500">Q3_Sales.csv</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-200 text-slate-600">
+                                    <tr>
+                                        <th class="p-2 font-semibold">A: Product</th>
+                                        <th class="p-2 font-semibold">B: Category</th>
+                                        <th class="p-2 font-semibold">C: Sale Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table2-body" class="bg-white">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="scenario2-steps">
+                        <h4 class="font-bold text-lg mb-4">Goal:</h4>
+                        <ul class="list-disc list-inside space-y-2 text-slate-600 mb-6">
+                            <li>Calculate the total sales for each 'Category'.</li>
+                            <li>Find the average 'Sale Amount' across all products.</li>
+                        </ul>
+                        <button id="scenario2-start-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Start Tutorial</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="scenario3">
+                <div class="text-center mb-12">
+                    <span class="text-emerald-600 font-semibold">Scenario 3</span>
+                    <h3 class="text-2xl md:text-3xl font-bold mt-2">Summarizing Data & Creating Charts</h3>
+                    <p class="max-w-2xl mx-auto mt-4 text-slate-600">You have a large dataset of website traffic, showing daily visitors over the past few months. You need a quick visual to understand the trend and a brief summary for a report.</p>
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <div class="flex items-center mb-3">
+                            <span class="w-3 h-3 bg-red-400 rounded-full mr-2"></span>
+                            <span class="w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
+                            <span class="w-3 h-3 bg-green-400 rounded-full"></span>
+                            <span class="ml-auto text-sm font-medium text-slate-500">Traffic_Data.csv</span>
+                        </div>
+                        <div id="table3-container" class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-200 text-slate-600">
+                                    <tr>
+                                        <th class="p-2 font-semibold">A: Date</th>
+                                        <th class="p-2 font-semibold">B: Daily Visitors</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table3-body" class="bg-white">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="chart3-container" class="hidden chart-container">
+                            <canvas id="scenario3-chart"></canvas>
+                        </div>
+                    </div>
+                     <div id="scenario3-steps">
+                        <h4 class="font-bold text-lg mb-4">Goal:</h4>
+                        <ul class="list-disc list-inside space-y-2 text-slate-600 mb-6">
+                            <li>Create a line chart to show the trend of daily visitors.</li>
+                            <li>Get a concise summary of the traffic patterns.</li>
+                        </ul>
+                        <button id="scenario3-start-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Start Tutorial</button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <section id="conclusion" class="text-center mt-16 md:mt-24 pt-12 border-t border-slate-200">
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">Your New Data Superpower!</h2>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600">
+                You've just seen how Gemini can transform the way we interact with data. The key is to **experiment with your prompts**. Be clear and specific about what you want Gemini to do. The more you practice, the more powerful this tool will become for your daily tasks.
+            </p>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const scenario1Data = {
+                initial: [
+                    { name: 'john doe', email: 'john.d@example.com' },
+                    { name: 'Jane Smith', email: 'jane.smith@example.com' },
+                    { name: 'PETER JONES', email: 'peter.j@example.com' },
+                    { name: 'john doe', email: 'john.d@example.com' },
+                    { name: 'susan williams', email: 's.williams@example.com' },
+                ],
+                cleaned: [
+                    { name: 'John Doe', email: 'john.d@example.com' },
+                    { name: 'Jane Smith', email: 'jane.smith@example.com' },
+                    { name: 'Peter Jones', email: 'peter.j@example.com' },
+                    { name: 'Susan Williams', email: 's.williams@example.com' },
+                ]
+            };
+
+            const scenario2Data = {
+                initial: [
+                    { product: 'Laptop', category: 'Electronics', sales: 1200 },
+                    { product: 'Keyboard', category: 'Electronics', sales: 75 },
+                    { product: 'Desk Chair', category: 'Furniture', sales: 250 },
+                    { product: 'Monitor', category: 'Electronics', sales: 300 },
+                    { product: 'Desk Lamp', category: 'Furniture', sales: 45 },
+                ],
+                calculated: [
+                    { product: 'Laptop', category: 'Electronics', sales: 1200 },
+                    { product: 'Keyboard', category: 'Electronics', sales: 75 },
+                    { product: 'Desk Chair', category: 'Furniture', sales: 250 },
+                    { product: 'Monitor', category: 'Electronics', sales: 300 },
+                    { product: 'Desk Lamp', category: 'Furniture', sales: 45 },
+                    { product: '', category: '<b>Total Electronics:</b>', sales: '<b>$1575</b>' },
+                    { product: '', category: '<b>Total Furniture:</b>', sales: '<b>$295</b>' },
+                    { product: '', category: '<b>Average Sale:</b>', sales: '<b>$374</b>' },
+                ]
+            };
+
+            const scenario3Data = [
+                { date: '2025-07-01', visitors: 1250 }, { date: '2025-07-02', visitors: 1320 },
+                { date: '2025-07-03', visitors: 1450 }, { date: '2025-07-04', visitors: 1100 },
+                { date: '2025-07-05', visitors: 1600 }, { date: '2025-07-06', visitors: 1850 },
+                { date: '2025-07-07', visitors: 1700 },
+            ];
+
+            function renderTable(tbodyId, data) {
+                const tbody = document.getElementById(tbodyId);
+                tbody.innerHTML = '';
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-b border-slate-200';
+                    let html = '';
+                    for (const key in row) {
+                        html += `<td class="p-2">${row[key]}</td>`;
+                    }
+                    tr.innerHTML = html;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            renderTable('table1-body', scenario1Data.initial);
+            renderTable('table2-body', scenario2Data.initial);
+            renderTable('table3-body', scenario3Data);
+
+            let s1Chart = null;
+
+            function setupScenario(config) {
+                const startBtn = document.getElementById(config.startButtonId);
+                const stepsContainer = document.getElementById(config.stepsContainerId);
+                let currentStep = 0;
+
+                startBtn.addEventListener('click', () => {
+                    currentStep = 1;
+                    renderStep();
+                });
+
+                function renderStep() {
+                    if (currentStep > config.steps.length) {
+                        stepsContainer.innerHTML = `<p class="text-green-700 font-semibold">Scenario complete! Great job.</p> <button id="${config.id}-reset" class="w-full mt-4 bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Reset</button>`;
+                        document.getElementById(`${config.id}-reset`).addEventListener('click', () => {
+                             currentStep = 0;
+                             config.onReset();
+                             stepsContainer.innerHTML = config.initialHtml;
+                             document.getElementById(config.startButtonId).addEventListener('click', startListener);
+                        });
+                        return;
+                    }
+
+                    const step = config.steps[currentStep - 1];
+                    stepsContainer.innerHTML = `
+                        <h4 class="font-bold text-lg mb-2">Step ${currentStep}: ${step.title}</h4>
+                        <p class="text-slate-600 mb-4">${step.description}</p>
+                        ${step.prompt ? `<div class="prompt-code mb-4">${step.prompt}</div>` : ''}
+                        <button id="${config.id}-next-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Next</button>
+                    `;
+                    
+                    step.action();
+
+                    document.getElementById(`${config.id}-next-btn`).addEventListener('click', () => {
+                        currentStep++;
+                        renderStep();
+                    });
+                }
+                const startListener = () => {
+                    currentStep = 1;
+                    renderStep();
+                };
+                startBtn.addEventListener('click', startListener);
+            }
+            
+            setupScenario({
+                id: 'scenario1',
+                startButtonId: 'scenario1-start-btn',
+                stepsContainerId: 'scenario1-steps',
+                initialHtml: document.getElementById('scenario1-steps').innerHTML,
+                onReset: () => renderTable('table1-body', scenario1Data.initial),
+                steps: [
+                    { title: 'Open Gemini', description: 'First, open the Gemini side panel by clicking the ✨ icon in the top right of your sheet.', action: () => {} },
+                    { title: 'Tell Gemini What To Do', description: 'In the prompt box, type a clear instruction to clean the data.', prompt: 'Clean this data. Correct capitalization in the \'Name\' column. Remove any duplicate rows.', action: () => {} },
+                    { title: 'Review and Apply', description: 'Gemini processes your request and shows a preview. Once you click "Apply", the data is instantly cleaned!', action: () => renderTable('table1-body', scenario1Data.cleaned) }
+                ]
+            });
+
+            setupScenario({
+                id: 'scenario2',
+                startButtonId: 'scenario2-start-btn',
+                stepsContainerId: 'scenario2-steps',
+                initialHtml: document.getElementById('scenario2-steps').innerHTML,
+                onReset: () => renderTable('table2-body', scenario2Data.initial),
+                steps: [
+                    { title: 'Ask for a Formula', description: 'In the Gemini prompt box, ask for the formula you need. Be specific about the columns.', prompt: 'Create a formula to sum the \'Sale Amount\' for each unique \'Category\'.', action: () => {} },
+                    { title: 'Calculate the Totals', description: 'Gemini generates the correct formula. When you apply it, it calculates the totals for you.', action: () => {} },
+                    { title: 'Get an Average', description: 'You can ask follow-up questions for more insights.', prompt: 'What is the average of all values in the \'Sale Amount\' column?', action: () => renderTable('table2-body', scenario2Data.calculated) }
+                ]
+            });
+
+            setupScenario({
+                id: 'scenario3',
+                startButtonId: 'scenario3-start-btn',
+                stepsContainerId: 'scenario3-steps',
+                initialHtml: document.getElementById('scenario3-steps').innerHTML,
+                onReset: () => {
+                    document.getElementById('table3-container').classList.remove('hidden');
+                    document.getElementById('chart3-container').classList.add('hidden');
+                    if (s1Chart) {
+                        s1Chart.destroy();
+                        s1Chart = null;
+                    }
+                },
+                steps: [
+                    { title: 'Request a Chart', description: 'Highlight the data you want to visualize. Then, ask Gemini to create a chart.', prompt: 'Create a line chart showing \'Daily Visitors\' over \'Date\'.', action: () => {} },
+                    { 
+                        title: 'Review and Insert', 
+                        description: 'Gemini generates a preview of the chart. When you click "Insert", it\'s added to your sheet, providing a clear visual of your data.', 
+                        action: () => {
+                            document.getElementById('table3-container').classList.add('hidden');
+                            document.getElementById('chart3-container').classList.remove('hidden');
+                            const ctx = document.getElementById('scenario3-chart').getContext('2d');
+                            if (s1Chart) s1Chart.destroy();
+                            s1Chart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: scenario3Data.map(d => d.date.substring(5)), // Show month-day
+                                    datasets: [{
+                                        label: 'Daily Visitors',
+                                        data: scenario3Data.map(d => d.visitors),
+                                        borderColor: '#10b981',
+                                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                        fill: true,
+                                        tension: 0.1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: { y: { beginAtZero: true } }
+                                }
+                            });
+                        } 
+                    },
+                    { title: 'Get a Summary', description: 'For deeper insights, ask Gemini to summarize the trends for you.', prompt: 'Summarize the key trends in this website traffic data.', action: () => {} }
+                ]
+            });
+        });
+    </script>
+</body>
+</html>
